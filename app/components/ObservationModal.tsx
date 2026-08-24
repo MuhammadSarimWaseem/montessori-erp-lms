@@ -114,34 +114,44 @@ export default function ObservationModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
+    <div 
+      onClick={(e) => { if (e.target === e.currentTarget) setIsObservationModalOpen(false); }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md cursor-pointer overflow-y-auto"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white border border-slate-200 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col cursor-default text-slate-900"
+      >
         
         {/* Header */}
-        <div className="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+        <div className="p-4 bg-slate-100 border-b border-slate-200 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-emerald-700 font-extrabold text-sm">
             <Clock className="w-5 h-5" />
             <span>Record Live Montessori Observation</span>
             {!isOnline && (
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">Offline Saved</span>
+              <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded border border-amber-300">Offline Saved</span>
             )}
           </div>
-          <button onClick={() => setIsObservationModalOpen(false)} className="text-slate-400 hover:text-white">
+          <button 
+            type="button"
+            onClick={() => setIsObservationModalOpen(false)} 
+            className="p-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 text-xs text-slate-300 overflow-y-auto max-h-[80vh]">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 text-xs text-slate-700 overflow-y-auto max-h-[80vh]">
           
           {/* Target Student Select & Work Timer */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-400 font-semibold mb-1">Select Student:</label>
+              <label className="block text-slate-700 font-bold mb-1">Select Student:</label>
               <select
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 font-medium"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-600 font-semibold"
               >
                 {students.map(s => (
                   <option key={s.id} value={s.id}>{s.name} ({s.classroom})</option>
@@ -150,10 +160,10 @@ export default function ObservationModal() {
             </div>
 
             {/* Work Period Timer Widget */}
-            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 flex items-center justify-between">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase block">Work Cycle Focus Timer</span>
-                <span className="text-lg font-mono font-extrabold text-emerald-400">{formatTimer(seconds)}</span>
+                <span className="text-[10px] text-slate-500 font-bold uppercase block">Focus Timer</span>
+                <span className="text-lg font-mono font-extrabold text-emerald-700">{formatTimer(seconds)}</span>
               </div>
               <div className="flex items-center gap-1">
                 <button
@@ -168,7 +178,7 @@ export default function ObservationModal() {
                 <button
                   type="button"
                   onClick={() => { setSeconds(0); setIsTimerRunning(false); }}
-                  className="p-2 rounded-lg bg-slate-700 text-slate-300 hover:bg-slate-600"
+                  className="p-2 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
@@ -179,11 +189,11 @@ export default function ObservationModal() {
           {/* Area & Material Title */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-400 font-semibold mb-1">Montessori Area:</label>
+              <label className="block text-slate-700 font-bold mb-1">Montessori Area:</label>
               <select
                 value={area}
                 onChange={(e) => setArea(e.target.value as MontessoriArea)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-semibold focus:outline-none focus:border-emerald-600"
               >
                 <option value="Practical Life">Practical Life</option>
                 <option value="Sensorial">Sensorial</option>
@@ -193,13 +203,13 @@ export default function ObservationModal() {
               </select>
             </div>
             <div>
-              <label className="block text-slate-400 font-semibold mb-1">Material / Activity:</label>
+              <label className="block text-slate-700 font-bold mb-1">Material / Activity:</label>
               <input
                 type="text"
                 value={materialTitle}
                 onChange={(e) => setMaterialTitle(e.target.value)}
                 placeholder="e.g. Golden Bead Bank System"
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-600"
               />
             </div>
           </div>
@@ -207,18 +217,18 @@ export default function ObservationModal() {
           {/* Voice-to-Text Input Area */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-slate-400 font-semibold">Observational Note & Behaviors:</label>
+              <label className="block text-slate-700 font-bold">Observational Note & Behaviors:</label>
               
               <button
                 type="button"
                 onClick={handleToggleVoice}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                   isRecording 
-                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse' 
-                    : 'bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20'
+                    ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse' 
+                    : 'bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100'
                 }`}
               >
-                {isRecording ? <MicOff className="w-3.5 h-3.5 text-rose-400" /> : <Mic className="w-3.5 h-3.5 text-purple-400" />}
+                {isRecording ? <MicOff className="w-3.5 h-3.5 text-rose-600" /> : <Mic className="w-3.5 h-3.5 text-purple-600" />}
                 <span>{isRecording ? 'Listening...' : 'Voice-to-Text'}</span>
               </button>
             </div>
@@ -228,13 +238,13 @@ export default function ObservationModal() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Describe child choice of work, concentration level, repetition, self-correction, or social interaction..."
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-emerald-500 text-xs leading-relaxed"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-emerald-600 text-xs leading-relaxed"
             />
           </div>
 
           {/* Focus Tags Selection */}
           <div>
-            <label className="block text-slate-400 font-semibold mb-2">Montessori Observation Tags:</label>
+            <label className="block text-slate-700 font-bold mb-2">Montessori Observation Tags:</label>
             <div className="flex flex-wrap gap-2">
               {availableTags.map(tag => {
                 const isSelected = selectedTags.includes(tag);
@@ -245,8 +255,8 @@ export default function ObservationModal() {
                     onClick={() => toggleTag(tag)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
                       isSelected 
-                        ? 'bg-emerald-500 text-slate-950 font-bold' 
-                        : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-emerald-600 text-white font-bold' 
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
                     <Tag className="w-3 h-3" />
@@ -258,17 +268,17 @@ export default function ObservationModal() {
           </div>
 
           {/* Action Footer */}
-          <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={() => setIsObservationModalOpen(false)}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-semibold hover:bg-slate-700 transition"
+              className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold shadow-lg shadow-emerald-500/30 hover:scale-105 transition"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold shadow-md hover:bg-emerald-700 transition"
             >
               <Save className="w-4 h-4" />
               <span>Save Observation Note</span>

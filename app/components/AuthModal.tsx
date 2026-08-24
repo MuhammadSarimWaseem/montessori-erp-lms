@@ -5,12 +5,12 @@ import { useApp } from '../context/AppContext';
 import { UserRole } from '@/lib/types';
 import { supabase } from '@/lib/db/supabaseClient';
 import { 
-  Lock, Mail, User, Shield, GraduationCap, 
+  Lock, Mail, User, Shield, GraduationCap, X,
   HeartHandshake, Smile, DollarSign, Crown, Sparkles, CheckCircle2, ArrowRight
 } from 'lucide-react';
 
 export default function AuthModal() {
-  const { theme, activeRole, setActiveRole, isAuthenticated, setIsAuthenticated, currentUser } = useApp();
+  const { theme, activeRole, setActiveRole, isAuthenticated, setIsAuthenticated } = useApp();
   const isDark = theme === 'dark';
 
   const [mode, setMode] = useState<'SIGN_IN' | 'SIGN_UP' | 'DEMO'>('DEMO');
@@ -24,6 +24,10 @@ export default function AuthModal() {
 
   if (isAuthenticated) return null;
 
+  const handleClose = () => {
+    setIsAuthenticated(true);
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -36,7 +40,6 @@ export default function AuthModal() {
       });
 
       if (error) {
-        // Fallback demo sign-in if Supabase credentials user is demo
         setActiveRole(selectedRole);
         setIsAuthenticated(true);
       } else {
@@ -67,19 +70,11 @@ export default function AuthModal() {
         }
       });
 
-      if (error) {
-        setSuccessMsg(`Account created for ${fullName} as ${selectedRole}! Logging in...`);
-        setTimeout(() => {
-          setActiveRole(selectedRole);
-          setIsAuthenticated(true);
-        }, 1000);
-      } else {
-        setSuccessMsg(`Registration successful! Welcome, ${fullName}.`);
-        setTimeout(() => {
-          setActiveRole(selectedRole);
-          setIsAuthenticated(true);
-        }, 1000);
-      }
+      setSuccessMsg(`Account created for ${fullName}! Logging in...`);
+      setTimeout(() => {
+        setActiveRole(selectedRole);
+        setIsAuthenticated(true);
+      }, 800);
     } catch (err: any) {
       setActiveRole(selectedRole);
       setIsAuthenticated(true);
@@ -137,10 +132,16 @@ export default function AuthModal() {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-      <div className={`w-full max-w-2xl rounded-3xl border shadow-2xl overflow-hidden my-8 transition-colors ${
-        isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
-      }`}>
+    <div 
+      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto cursor-pointer"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className={`w-full max-w-2xl rounded-3xl border shadow-2xl overflow-hidden my-8 transition-colors cursor-default ${
+          isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+        }`}
+      >
         
         {/* Top Header */}
         <div className="p-6 bg-gradient-to-r from-emerald-700 via-teal-700 to-indigo-800 text-white flex items-center justify-between">
@@ -153,6 +154,14 @@ export default function AuthModal() {
               <p className="text-xs text-emerald-100 font-medium">Multi-Tenant RBAC Authentication & Role Portal</p>
             </div>
           </div>
+
+          <button 
+            onClick={handleClose}
+            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition"
+            title="Close Auth Portal"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Mode Selector Tabs */}

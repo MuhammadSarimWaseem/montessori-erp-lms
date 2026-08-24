@@ -7,6 +7,7 @@ import { getOfflineQueue, saveOfflineItem } from '@/lib/offline/indexedDb';
 import { flushOfflineQueue } from '@/lib/offline/syncEngine';
 
 export type ThemeMode = 'light' | 'dark';
+export type PageTab = 'OVERVIEW' | 'STUDENTS' | 'CURRICULUM' | 'OBSERVATIONS' | 'FINANCE' | 'AI_INSIGHTS';
 
 interface AppContextType {
   theme: ThemeMode;
@@ -17,6 +18,8 @@ interface AppContextType {
   signOut: () => void;
   activeRole: UserRole;
   setActiveRole: (role: UserRole) => void;
+  activeTab: PageTab;
+  setActiveTab: (tab: PageTab) => void;
   activeTenantId: string;
   setActiveTenantId: (id: string) => void;
   activeTenant: Tenant;
@@ -49,6 +52,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [activeRole, setActiveRole] = useState<UserRole>('TEACHER');
+  const [activeTab, setActiveTab] = useState<PageTab>('OVERVIEW');
   const [activeTenantId, setActiveTenantId] = useState<string>('tenant-1');
   const [isOnline, setIsOnline] = useState<boolean>(true);
   const [offlineQueueCount, setOfflineQueueCount] = useState<number>(0);
@@ -141,6 +145,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       signOut,
       activeRole,
       setActiveRole,
+      activeTab,
+      setActiveTab,
       activeTenantId,
       setActiveTenantId,
       activeTenant,

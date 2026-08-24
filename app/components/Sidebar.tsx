@@ -2,14 +2,15 @@
 
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { PageTab } from '../context/AppContext';
 import { 
   LayoutDashboard, BookOpen, Clock, Award, 
-  DollarSign, Sparkles, QrCode, FileText, Box
+  DollarSign, Sparkles, QrCode, FileText, Box, Users
 } from 'lucide-react';
 
 export default function Sidebar() {
   const { 
-    theme, activeRole, currentUser, 
+    theme, activeRole, activeTab, setActiveTab, currentUser, 
     setIsObservationModalOpen, setIsAttendanceModalOpen, 
     setIsSandboxOpen, setIsReportCardOpen
   } = useApp();
@@ -113,44 +114,69 @@ export default function Sidebar() {
           )}
         </div>
 
-        {/* Dynamic Nav Menu */}
+        {/* Dynamic Nav Menu Hierarchy */}
         <div className="space-y-1">
-          <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 px-2">Navigation</p>
+          <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 px-2">Page Hierarchy</p>
 
-          <a href="#overview" className={`flex items-center gap-3 px-3 py-2 rounded-xl font-bold text-xs border-l-4 border-emerald-600 shadow-sm ${
-            isDark ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-900'
-          }`}>
-            <LayoutDashboard className="w-4 h-4 text-emerald-600" />
+          <button 
+            onClick={() => setActiveTab('OVERVIEW')}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition ${
+              activeTab === 'OVERVIEW' 
+                ? 'bg-emerald-600 text-white shadow-md' 
+                : isDark ? 'text-slate-400 hover:bg-slate-900 hover:text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4 text-emerald-500" />
             <span>Dashboard Overview</span>
-          </a>
+          </button>
 
-          <a href="#curriculum" className={`flex items-center gap-3 px-3 py-2 rounded-xl font-semibold text-xs transition ${
-            isDark ? 'text-slate-400 hover:text-white hover:bg-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}>
-            <BookOpen className="w-4 h-4 text-teal-600" />
-            <span>Montessori Curriculum</span>
-          </a>
+          <button 
+            onClick={() => setActiveTab('CURRICULUM')}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition ${
+              activeTab === 'CURRICULUM' 
+                ? 'bg-emerald-600 text-white shadow-md' 
+                : isDark ? 'text-slate-400 hover:bg-slate-900 hover:text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-teal-500" />
+            <span>Curriculum & Lessons</span>
+          </button>
 
-          <a href="#observations" className={`flex items-center gap-3 px-3 py-2 rounded-xl font-semibold text-xs transition ${
-            isDark ? 'text-slate-400 hover:text-white hover:bg-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}>
-            <Clock className="w-4 h-4 text-cyan-600" />
+          <button 
+            onClick={() => setActiveTab('OBSERVATIONS')}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition ${
+              activeTab === 'OBSERVATIONS' 
+                ? 'bg-emerald-600 text-white shadow-md' 
+                : isDark ? 'text-slate-400 hover:bg-slate-900 hover:text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Clock className="w-4 h-4 text-cyan-500" />
             <span>Observation Stream</span>
-          </a>
+          </button>
 
-          <a href="#finance" className={`flex items-center gap-3 px-3 py-2 rounded-xl font-semibold text-xs transition ${
-            isDark ? 'text-slate-400 hover:text-white hover:bg-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}>
-            <DollarSign className="w-4 h-4 text-emerald-600" />
+          <button 
+            onClick={() => setActiveTab('FINANCE')}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition ${
+              activeTab === 'FINANCE' 
+                ? 'bg-emerald-600 text-white shadow-md' 
+                : isDark ? 'text-slate-400 hover:bg-slate-900 hover:text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <DollarSign className="w-4 h-4 text-emerald-500" />
             <span>Invoices & Payroll</span>
-          </a>
+          </button>
 
-          <a href="#ai-insights" className={`flex items-center gap-3 px-3 py-2 rounded-xl font-semibold text-xs transition ${
-            isDark ? 'text-slate-400 hover:text-white hover:bg-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-          }`}>
-            <Sparkles className="w-4 h-4 text-purple-600" />
+          <button 
+            onClick={() => setActiveTab('AI_INSIGHTS')}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition ${
+              activeTab === 'AI_INSIGHTS' 
+                ? 'bg-emerald-600 text-white shadow-md' 
+                : isDark ? 'text-slate-400 hover:bg-slate-900 hover:text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-purple-500" />
             <span>AI Predictive Insights</span>
-          </a>
+          </button>
         </div>
 
       </div>
