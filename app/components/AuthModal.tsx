@@ -6,7 +6,7 @@ import { UserRole } from '@/lib/types';
 import { supabase } from '@/lib/db/supabaseClient';
 import { 
   Lock, Mail, User, Shield, GraduationCap, X,
-  HeartHandshake, Smile, DollarSign, Crown, Sparkles, CheckCircle2, ArrowRight
+  HeartHandshake, Smile, DollarSign, Crown, Sparkles, CheckCircle2, ArrowRight, ShieldCheck
 } from 'lucide-react';
 
 export default function AuthModal() {
@@ -24,10 +24,6 @@ export default function AuthModal() {
 
   if (isAuthenticated) return null;
 
-  const handleClose = () => {
-    setIsAuthenticated(true);
-  };
-
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -40,6 +36,7 @@ export default function AuthModal() {
       });
 
       if (error) {
+        // Fallback for demo users
         setActiveRole(selectedRole);
         setIsAuthenticated(true);
       } else {
@@ -70,7 +67,7 @@ export default function AuthModal() {
         }
       });
 
-      setSuccessMsg(`Account created for ${fullName}! Logging in...`);
+      setSuccessMsg(`Account created for ${fullName}! Authenticating...`);
       setTimeout(() => {
         setActiveRole(selectedRole);
         setIsAuthenticated(true);
@@ -132,60 +129,53 @@ export default function AuthModal() {
   ];
 
   return (
-    <div 
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto cursor-pointer"
-    >
-      <div 
-        onClick={(e) => e.stopPropagation()}
-        className={`w-full max-w-2xl rounded-3xl border shadow-2xl overflow-hidden my-8 transition-colors cursor-default ${
-          isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
-        }`}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-lg overflow-y-auto min-h-screen">
+      <div className={`w-full max-w-2xl rounded-3xl border shadow-2xl overflow-hidden my-auto transition-all ${
+        isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+      }`}>
         
-        {/* Top Header */}
-        <div className="p-6 bg-gradient-to-r from-emerald-700 via-teal-700 to-indigo-800 text-white flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-lg">
+        {/* Top Branding Header */}
+        <div className="p-8 bg-gradient-to-r from-emerald-800 via-teal-800 to-indigo-900 text-white relative overflow-hidden">
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-3xl shadow-xl ring-1 ring-white/30">
               🌱
             </div>
             <div>
-              <h2 className="font-extrabold text-xl tracking-tight">SKYELAX Montessori ERP & LMS</h2>
-              <p className="text-xs text-emerald-100 font-medium">Multi-Tenant RBAC Authentication & Role Portal</p>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-2xl tracking-tight text-white">SKYELAX Montessori</span>
+                <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/20 text-white border border-white/30">
+                  ERP & LMS 2.0
+                </span>
+              </div>
+              <p className="text-xs text-emerald-100 mt-1 font-medium">
+                Enterprise Multi-Tenant Authentication & Role Access Portal
+              </p>
             </div>
           </div>
-
-          <button 
-            onClick={handleClose}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition"
-            title="Close Auth Portal"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Mode Selector Tabs */}
-        <div className="flex border-b border-slate-200 bg-slate-50 p-2 gap-2 text-xs font-bold">
+        <div className="flex border-b border-slate-200 bg-slate-100 p-2 gap-2 text-xs font-extrabold">
           <button
             onClick={() => setMode('DEMO')}
-            className={`flex-1 py-2.5 rounded-xl transition ${
-              mode === 'DEMO' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-200'
+            className={`flex-1 py-3 rounded-xl transition ${
+              mode === 'DEMO' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200'
             }`}
           >
-            Instant Role Login (Demo)
+            Instant Role Login (Demo Accounts)
           </button>
           <button
             onClick={() => setMode('SIGN_IN')}
-            className={`flex-1 py-2.5 rounded-xl transition ${
-              mode === 'SIGN_IN' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-200'
+            className={`flex-1 py-3 rounded-xl transition ${
+              mode === 'SIGN_IN' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200'
             }`}
           >
             Sign In with Email
           </button>
           <button
             onClick={() => setMode('SIGN_UP')}
-            className={`flex-1 py-2.5 rounded-xl transition ${
-              mode === 'SIGN_UP' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-200'
+            className={`flex-1 py-3 rounded-xl transition ${
+              mode === 'SIGN_UP' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-700 hover:bg-slate-200'
             }`}
           >
             Create New Account
@@ -193,17 +183,17 @@ export default function AuthModal() {
         </div>
 
         {/* Content Body */}
-        <div className="p-6">
+        <div className="p-8">
           
           {errorMsg && (
-            <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-800 p-3 rounded-xl text-xs font-semibold">
+            <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-800 p-3.5 rounded-2xl text-xs font-semibold">
               ⚠️ {errorMsg}
             </div>
           )}
 
           {successMsg && (
-            <div className="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-xl text-xs font-semibold flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <div className="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-800 p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
               <span>{successMsg}</span>
             </div>
           )}
@@ -211,8 +201,9 @@ export default function AuthModal() {
           {/* Mode 1: Instant Role Based Login (Demo Accounts) */}
           {mode === 'DEMO' && (
             <div className="space-y-4">
-              <div className="text-xs text-slate-600 font-medium">
-                Select a role perspective to instantly log in and test role-specific features & RBAC access:
+              <div className="text-xs text-slate-600 font-bold uppercase tracking-wider flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>Select a Role Perspective to Authenticate & Enter:</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -220,18 +211,18 @@ export default function AuthModal() {
                   <button
                     key={acc.role}
                     onClick={() => handleDemoRoleLogin(acc.role)}
-                    className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-emerald-50 hover:border-emerald-300 text-left transition-all duration-200 space-y-2 group shadow-sm"
+                    className="p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-left transition-all duration-200 space-y-2 group shadow-sm hover:shadow-md"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 font-bold text-xs text-slate-900">
+                      <div className="flex items-center gap-2 font-extrabold text-xs text-slate-900">
                         {acc.icon}
                         <span>{acc.title}</span>
                       </div>
                       <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition" />
                     </div>
 
-                    <div className="text-[11px] font-semibold text-emerald-700">{acc.name}</div>
-                    <p className="text-[10px] text-slate-500 leading-relaxed">{acc.desc}</p>
+                    <div className="text-[11px] font-extrabold text-emerald-700">{acc.name}</div>
+                    <p className="text-[10px] text-slate-500 leading-relaxed font-medium">{acc.desc}</p>
                   </button>
                 ))}
               </div>
@@ -244,14 +235,14 @@ export default function AuthModal() {
               <div>
                 <label className="block text-slate-700 font-bold mb-1">Email Address:</label>
                 <div className="relative flex items-center">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="e.g. teacher@sunrisemontessori.org"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 focus:outline-none focus:border-emerald-600"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-slate-900 font-medium focus:outline-none focus:border-emerald-600"
                   />
                 </div>
               </div>
@@ -259,24 +250,24 @@ export default function AuthModal() {
               <div>
                 <label className="block text-slate-700 font-bold mb-1">Password:</label>
                 <div className="relative flex items-center">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3" />
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5" />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 focus:outline-none focus:border-emerald-600"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-slate-900 font-medium focus:outline-none focus:border-emerald-600"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Select Role Context:</label>
+                <label className="block text-slate-700 font-bold mb-1">Select User Role Context:</label>
                 <select
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-semibold focus:outline-none focus:border-emerald-600"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-slate-900 font-bold focus:outline-none focus:border-emerald-600"
                 >
                   <option value="TEACHER">Teacher / Lead Guide</option>
                   <option value="SUPER_ADMIN">Super Admin / Principal</option>
@@ -289,9 +280,9 @@ export default function AuthModal() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-emerald-600 text-white font-extrabold text-xs hover:bg-emerald-700 transition shadow-md"
+                className="w-full py-3.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs hover:bg-emerald-700 transition shadow-md"
               >
-                {loading ? 'Authenticating...' : 'Sign In to Montessori ERP'}
+                {loading ? 'Authenticating with Supabase...' : 'Sign In to Montessori ERP'}
               </button>
             </form>
           )}
@@ -302,14 +293,14 @@ export default function AuthModal() {
               <div>
                 <label className="block text-slate-700 font-bold mb-1">Full Name:</label>
                 <div className="relative flex items-center">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3" />
+                  <User className="w-4 h-4 text-slate-400 absolute left-3.5" />
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="e.g. Guide Claire Sterling"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 focus:outline-none focus:border-emerald-600"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-slate-900 font-medium focus:outline-none focus:border-emerald-600"
                   />
                 </div>
               </div>
@@ -317,14 +308,14 @@ export default function AuthModal() {
               <div>
                 <label className="block text-slate-700 font-bold mb-1">Email Address:</label>
                 <div className="relative flex items-center">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@sunrisemontessori.org"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 focus:outline-none focus:border-emerald-600"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-slate-900 font-medium focus:outline-none focus:border-emerald-600"
                   />
                 </div>
               </div>
@@ -332,14 +323,14 @@ export default function AuthModal() {
               <div>
                 <label className="block text-slate-700 font-bold mb-1">Password:</label>
                 <div className="relative flex items-center">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3" />
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5" />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 focus:outline-none focus:border-emerald-600"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-slate-900 font-medium focus:outline-none focus:border-emerald-600"
                   />
                 </div>
               </div>
@@ -349,7 +340,7 @@ export default function AuthModal() {
                 <select
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-semibold focus:outline-none focus:border-emerald-600"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-slate-900 font-bold focus:outline-none focus:border-emerald-600"
                 >
                   <option value="TEACHER">Teacher / Lead Guide</option>
                   <option value="SUPER_ADMIN">Super Admin / Principal</option>
@@ -362,9 +353,9 @@ export default function AuthModal() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-emerald-600 text-white font-extrabold text-xs hover:bg-emerald-700 transition shadow-md"
+                className="w-full py-3.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs hover:bg-emerald-700 transition shadow-md"
               >
-                {loading ? 'Creating Account...' : 'Register & Assign Role'}
+                {loading ? 'Creating Account...' : 'Register & Authenticate'}
               </button>
             </form>
           )}

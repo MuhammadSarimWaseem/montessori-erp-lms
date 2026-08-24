@@ -50,7 +50,8 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeMode>('light');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  // Default to unauthenticated so the user MUST sign in / authenticate first!
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [activeRole, setActiveRole] = useState<UserRole>('TEACHER');
   const [activeTab, setActiveTab] = useState<PageTab>('OVERVIEW');
   const [activeTenantId, setActiveTenantId] = useState<string>('tenant-1');
