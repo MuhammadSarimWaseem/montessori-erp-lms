@@ -12,6 +12,9 @@ interface AppContextType {
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
   toggleTheme: () => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (auth: boolean) => void;
+  signOut: () => void;
   activeRole: UserRole;
   setActiveRole: (role: UserRole) => void;
   activeTenantId: string;
@@ -44,6 +47,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeMode>('light');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [activeRole, setActiveRole] = useState<UserRole>('TEACHER');
   const [activeTenantId, setActiveTenantId] = useState<string>('tenant-1');
   const [isOnline, setIsOnline] = useState<boolean>(true);
@@ -58,6 +62,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  const signOut = () => {
+    setIsAuthenticated(false);
   };
 
   const triggerRefresh = () => setRefreshTrigger(prev => prev + 1);
@@ -128,6 +136,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       theme,
       setTheme,
       toggleTheme,
+      isAuthenticated,
+      setIsAuthenticated,
+      signOut,
       activeRole,
       setActiveRole,
       activeTenantId,

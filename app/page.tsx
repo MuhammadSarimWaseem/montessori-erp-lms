@@ -5,6 +5,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import OfflineBanner from './components/OfflineBanner';
+import AuthModal from './components/AuthModal';
 import AiAssistantDrawer from './components/AiAssistantDrawer';
 import MontessoriSandbox from './components/MontessoriSandbox';
 import ReportCardModal from './components/ReportCardModal';
@@ -37,7 +38,7 @@ function DashboardRouter() {
 }
 
 function MainAppLayout() {
-  const { theme } = useApp();
+  const { theme, isAuthenticated } = useApp();
   const isDark = theme === 'dark';
 
   return (
@@ -54,6 +55,9 @@ function MainAppLayout() {
           <DashboardRouter />
         </main>
       </div>
+
+      {/* Auth Modal overlay when unauthenticated or requested */}
+      <AuthModal />
 
       {/* Global Modals & Drawers */}
       <AiAssistantDrawer />

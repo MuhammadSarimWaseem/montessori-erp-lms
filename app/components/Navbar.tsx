@@ -6,12 +6,13 @@ import { UserRole } from '@/lib/types';
 import { 
   Building2, Sparkles, Box, Crown, GraduationCap, 
   HeartHandshake, Smile, DollarSign, ChevronDown, 
-  Sun, Moon, Wifi, WifiOff, RefreshCw
+  Sun, Moon, Wifi, WifiOff, RefreshCw, LogIn, LogOut
 } from 'lucide-react';
 
 export default function Navbar() {
   const { 
     theme, toggleTheme,
+    isAuthenticated, setIsAuthenticated, signOut,
     activeRole, setActiveRole, 
     activeTenantId, setActiveTenantId, 
     isOnline, offlineQueueCount, syncData,
@@ -81,7 +82,7 @@ export default function Navbar() {
               return (
                 <button
                   key={r.role}
-                  onClick={() => setActiveRole(r.role)}
+                  onClick={() => { setActiveRole(r.role); setIsAuthenticated(true); }}
                   className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                     isActive 
                       ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/20 scale-[1.02]' 
@@ -100,6 +101,20 @@ export default function Navbar() {
           {/* Right Action Icons & Status */}
           <div className="flex items-center gap-2.5 shrink-0">
             
+            {/* Auth / Sign Out Toggle */}
+            <button
+              onClick={() => setIsAuthenticated(false)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm ${
+                isDark 
+                  ? 'bg-slate-900 border-slate-800 text-emerald-400 hover:bg-slate-800' 
+                  : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
+              }`}
+              title="Sign In / Register / Switch Auth Role"
+            >
+              <LogIn className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Auth Portal</span>
+            </button>
+
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
@@ -168,7 +183,7 @@ export default function Navbar() {
             return (
               <button
                 key={r.role}
-                onClick={() => setActiveRole(r.role)}
+                onClick={() => { setActiveRole(r.role); setIsAuthenticated(true); }}
                 className={`whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${
                   isActive 
                     ? 'bg-emerald-600 text-white font-bold' 
