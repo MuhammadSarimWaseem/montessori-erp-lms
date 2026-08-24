@@ -37,15 +37,20 @@ function DashboardRouter() {
 }
 
 function MainAppLayout() {
+  const { theme } = useApp();
+  const isDark = theme === 'dark';
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
+    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
+      isDark ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'
+    }`}>
       <Navbar />
       <OfflineBanner />
 
       <div className="flex-1 flex overflow-hidden">
         <Sidebar />
         
-        <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-6 overflow-y-auto max-w-[1600px] mx-auto w-full">
           <DashboardRouter />
         </main>
       </div>

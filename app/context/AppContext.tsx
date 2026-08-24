@@ -6,7 +6,12 @@ import { db } from '@/lib/db';
 import { getOfflineQueue, saveOfflineItem } from '@/lib/offline/indexedDb';
 import { flushOfflineQueue } from '@/lib/offline/syncEngine';
 
+export type ThemeMode = 'light' | 'dark';
+
 interface AppContextType {
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
+  toggleTheme: () => void;
   activeRole: UserRole;
   setActiveRole: (role: UserRole) => void;
   activeTenantId: string;
@@ -38,6 +43,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<ThemeMode>('light');
   const [activeRole, setActiveRole] = useState<UserRole>('TEACHER');
   const [activeTenantId, setActiveTenantId] = useState<string>('tenant-1');
   const [isOnline, setIsOnline] = useState<boolean>(true);
@@ -49,6 +55,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [isReportCardOpen, setIsReportCardOpen] = useState<boolean>(false);
   const [selectedStudentId, setSelectedStudentId] = useState<string>('std-1');
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   const triggerRefresh = () => setRefreshTrigger(prev => prev + 1);
 
@@ -65,7 +75,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       window.addEventListener('online', handleOnline);
       window.addEventListener('offline', handleOffline);
 
-      // Check offline queue count
       updateQueueCount();
 
       return () => {
@@ -82,7 +91,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const syncData = async () => {
     if (navigator.onLine) {
-      const res = await flushOfflineQueue();
+      await flushOfflineQueue();
       await updateQueueCount();
       triggerRefresh();
     }
@@ -116,6 +125,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AppContext.Provider value={{
+      theme,
+      setTheme,
+      toggleTheme,
       activeRole,
       setActiveRole,
       activeTenantId,

@@ -9,7 +9,8 @@ import {
 } from 'lucide-react';
 
 export default function FinanceHrDashboard() {
-  const { activeTenant, triggerRefresh } = useApp();
+  const { theme, activeTenant, triggerRefresh } = useApp();
+  const isDark = theme === 'dark';
 
   const invoices = db.getInvoices(activeTenant.id);
   const payroll = db.getPayroll(activeTenant.id);
@@ -27,43 +28,51 @@ export default function FinanceHrDashboard() {
     <div className="space-y-6">
       
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 p-6 rounded-2xl border border-emerald-500/20 shadow-xl flex items-center justify-between flex-wrap gap-4">
+      <div className={`p-6 rounded-3xl border shadow-xl flex items-center justify-between flex-wrap gap-4 ${
+        isDark 
+          ? 'bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 border-emerald-500/20 text-white' 
+          : 'bg-gradient-to-r from-emerald-800 via-teal-800 to-indigo-900 text-white border-emerald-600/30'
+      }`}>
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-bold text-emerald-200 uppercase tracking-wider mb-1">
             <DollarSign className="w-4 h-4" />
             <span>Finance & Human Resources Operations • {activeTenant.name}</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-white">Accounts Ledger & Payroll Disbursement</h1>
-          <p className="text-xs text-slate-400 mt-1">Manage tuition invoices, staff payroll ledgers, and classroom inventory maintenance.</p>
+          <h1 className="text-2xl font-extrabold">Accounts Ledger & Payroll Disbursement</h1>
+          <p className="text-xs text-emerald-100 mt-1">Manage tuition invoices, staff payroll ledgers, and classroom inventory maintenance.</p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700 text-right">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Collected Revenue</span>
-            <span className="text-xl font-bold text-emerald-400 font-mono">${totalCollected.toLocaleString()}</span>
+          <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20 text-right">
+            <span className="text-[10px] text-emerald-100 font-bold uppercase block">Collected Revenue</span>
+            <span className="text-xl font-extrabold text-white font-mono">${totalCollected.toLocaleString()}</span>
           </div>
-          <div className="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700 text-right">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">Pending Accounts</span>
-            <span className="text-xl font-bold text-amber-400 font-mono">${totalPending.toLocaleString()}</span>
+          <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20 text-right">
+            <span className="text-[10px] text-emerald-100 font-bold uppercase block">Pending Accounts</span>
+            <span className="text-xl font-extrabold text-amber-300 font-mono">${totalPending.toLocaleString()}</span>
           </div>
         </div>
       </div>
 
       {/* Accounts Receivable Invoices Table */}
-      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+      <div className={`p-6 rounded-2xl border shadow-sm space-y-4 ${
+        isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+      }`}>
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-sm text-white flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-emerald-400" />
+          <h3 className={`font-bold text-sm flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <CreditCard className="w-4 h-4 text-emerald-600" />
             <span>Accounts Receivable Tuition Ledger</span>
           </h3>
 
-          <span className="text-xs text-slate-400">Total Invoices: {invoices.length}</span>
+          <span className="text-xs text-slate-500 font-medium">Total Invoices: {invoices.length}</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-800 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-700">
+              <tr className={`font-bold uppercase text-[10px] tracking-wider border-b ${
+                isDark ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-slate-100 text-slate-600 border-slate-200'
+              }`}>
                 <th className="p-3">Invoice ID</th>
                 <th className="p-3">Student / Parent</th>
                 <th className="p-3">Category</th>
@@ -73,22 +82,26 @@ export default function FinanceHrDashboard() {
                 <th className="p-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-300">
+            <tbody className={`divide-y ${
+              isDark ? 'divide-slate-800 text-slate-300' : 'divide-slate-200 text-slate-700'
+            }`}>
               {invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-slate-800/50 transition">
-                  <td className="p-3 font-mono font-bold text-white">{inv.id}</td>
+                <tr key={inv.id} className={isDark ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50'}>
+                  <td className={`p-3 font-mono font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{inv.id}</td>
                   <td className="p-3">
-                    <span className="font-bold text-white block">{inv.studentName}</span>
-                    <span className="text-[10px] text-slate-400">{inv.parentName}</span>
+                    <span className={`font-bold block ${isDark ? 'text-white' : 'text-slate-900'}`}>{inv.studentName}</span>
+                    <span className="text-[10px] text-slate-500">{inv.parentName}</span>
                   </td>
-                  <td className="p-3 font-medium text-emerald-400">{inv.category}</td>
-                  <td className="p-3 text-slate-400">{inv.dueDate}</td>
-                  <td className="p-3 font-mono font-bold text-white text-sm">${inv.amount.toFixed(2)}</td>
+                  <td className="p-3 font-semibold text-emerald-600">{inv.category}</td>
+                  <td className="p-3 text-slate-500">{inv.dueDate}</td>
+                  <td className={`p-3 font-mono font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    ${inv.amount.toFixed(2)}
+                  </td>
                   <td className="p-3">
                     <span className={`px-2.5 py-1 rounded text-[10px] font-bold ${
-                      inv.status === 'PAID' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
-                      inv.status === 'PENDING' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                      'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                      inv.status === 'PAID' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                      inv.status === 'PENDING' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                      'bg-rose-100 text-rose-800 border border-rose-200'
                     }`}>
                       {inv.status}
                     </span>
@@ -97,12 +110,12 @@ export default function FinanceHrDashboard() {
                     {inv.status !== 'PAID' ? (
                       <button
                         onClick={() => handleTogglePay(inv.id)}
-                        className="px-3 py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold text-[11px] hover:bg-emerald-400 transition"
+                        className="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 transition shadow-sm"
                       >
                         Mark Paid
                       </button>
                     ) : (
-                      <span className="text-[11px] text-emerald-400 font-semibold">Receipt #OK</span>
+                      <span className="text-[11px] text-emerald-600 font-bold">Receipt #OK</span>
                     )}
                   </td>
                 </tr>
@@ -116,9 +129,11 @@ export default function FinanceHrDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Staff Payroll Ledger */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
-          <h3 className="font-bold text-sm text-white flex items-center gap-2">
-            <Users className="w-4 h-4 text-teal-400" />
+        <div className={`p-6 rounded-2xl border shadow-sm space-y-4 ${
+          isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+        }`}>
+          <h3 className={`font-bold text-sm flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <Users className="w-4 h-4 text-teal-600" />
             <span>Staff Payroll & Compensation Matrix</span>
           </h3>
 
@@ -126,33 +141,35 @@ export default function FinanceHrDashboard() {
             {payroll.map((p) => {
               const netPay = p.salary + p.bonus - p.deductions;
               return (
-                <div key={p.id} className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 space-y-2 text-xs">
+                <div key={p.id} className={`p-4 rounded-xl border space-y-2 text-xs ${
+                  isDark ? 'bg-slate-800/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-bold text-white text-sm">{p.staffName}</h4>
-                      <p className="text-[10px] text-teal-400 font-medium">{p.roleTitle}</p>
+                      <h4 className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>{p.staffName}</h4>
+                      <p className="text-[10px] text-teal-600 font-bold">{p.roleTitle}</p>
                     </div>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                       {p.status}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-2 pt-2 border-t border-slate-700/50 text-[11px] text-center font-mono">
+                  <div className="grid grid-cols-4 gap-2 pt-2 border-t border-slate-200 text-[11px] text-center font-mono">
                     <div>
                       <span className="text-slate-500 block text-[9px]">BASE</span>
-                      <span className="text-white">${p.salary}</span>
+                      <span className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>${p.salary}</span>
                     </div>
                     <div>
                       <span className="text-slate-500 block text-[9px]">BONUS</span>
-                      <span className="text-emerald-400">+${p.bonus}</span>
+                      <span className="text-emerald-600 font-bold">+${p.bonus}</span>
                     </div>
                     <div>
                       <span className="text-slate-500 block text-[9px]">DEDUCT</span>
-                      <span className="text-rose-400">-${p.deductions}</span>
+                      <span className="text-rose-600 font-bold">-${p.deductions}</span>
                     </div>
                     <div>
                       <span className="text-slate-500 block text-[9px]">NET DISBURSED</span>
-                      <span className="text-emerald-300 font-bold">${netPay}</span>
+                      <span className="text-emerald-700 font-extrabold">${netPay}</span>
                     </div>
                   </div>
                 </div>
@@ -162,32 +179,36 @@ export default function FinanceHrDashboard() {
         </div>
 
         {/* Classroom Inventory Maintenance Tracker */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
-          <h3 className="font-bold text-sm text-white flex items-center gap-2">
-            <Box className="w-4 h-4 text-amber-400" />
+        <div className={`p-6 rounded-2xl border shadow-sm space-y-4 ${
+          isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+        }`}>
+          <h3 className={`font-bold text-sm flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <Box className="w-4 h-4 text-amber-600" />
             <span>Classroom Material Inventory & Repairs</span>
           </h3>
 
           <div className="space-y-3">
             {inventory.map((item) => (
-              <div key={item.id} className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 space-y-2 text-xs">
+              <div key={item.id} className={`p-4 rounded-xl border space-y-2 text-xs ${
+                isDark ? 'bg-slate-800/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-white text-xs">{item.materialName}</h4>
+                  <h4 className={`font-bold text-xs ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.materialName}</h4>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    item.condition === 'Excellent' ? 'bg-emerald-500/20 text-emerald-300' :
-                    item.condition === 'Good' ? 'bg-teal-500/20 text-teal-300' : 'bg-amber-500/20 text-amber-300'
+                    item.condition === 'Excellent' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                    item.condition === 'Good' ? 'bg-teal-100 text-teal-800 border border-teal-200' : 'bg-amber-100 text-amber-800 border border-amber-200'
                   }`}>
                     {item.condition}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-slate-400">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
                   <span>Classroom: {item.classroom}</span>
                   <span>Qty: {item.quantity}</span>
                 </div>
 
                 {item.maintenanceNote && (
-                  <p className="text-[11px] text-amber-300 bg-amber-500/10 p-2 rounded border border-amber-500/20">
+                  <p className="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-lg border border-amber-200 font-medium">
                     ⚠️ Note: {item.maintenanceNote}
                   </p>
                 )}
