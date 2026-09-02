@@ -4,9 +4,32 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { db } from '@/lib/db';
 import { 
-  DollarSign, Users, Box, CheckCircle2, AlertCircle, 
-  CreditCard, FileText, ArrowUpRight, TrendingUp
+  DollarSign, Users, Box, CheckCircle2,
+  CreditCard, Activity
 } from 'lucide-react';
+import {
+  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, Cell
+} from 'recharts';
+
+// Monthly revenue collection trend
+const monthlyRevenue = [
+  { month: 'Apr', collected: 42000, pending: 8000 },
+  { month: 'May', collected: 48000, pending: 5200 },
+  { month: 'Jun', collected: 44000, pending: 6800 },
+  { month: 'Jul', collected: 51000, pending: 3200 },
+  { month: 'Aug', collected: 54000, pending: 4100 },
+  { month: 'Sep', collected: 38000, pending: 16000 },
+];
+
+// Payroll by department
+const payrollByDept = [
+  { dept: 'Guides', amount: 28400, color: '#10b981' },
+  { dept: 'Assistants', amount: 14200, color: '#14b8a6' },
+  { dept: 'Admin', amount: 9600, color: '#6366f1' },
+  { dept: 'Support', amount: 7200, color: '#f59e0b' },
+  { dept: 'Maintenance', amount: 4800, color: '#8b5cf6' },
+];
 
 export default function FinanceHrDashboard() {
   const { theme, activeTenant, triggerRefresh } = useApp();
@@ -24,8 +47,11 @@ export default function FinanceHrDashboard() {
   const totalCollected = invoices.filter(i => i.status === 'PAID').reduce((sum, i) => sum + i.amount, 0);
   const totalPending = invoices.filter(i => i.status !== 'PAID').reduce((sum, i) => sum + i.amount, 0);
 
+  const chartTextColor = isDark ? '#94a3b8' : '#64748b';
+  const chartGridColor = isDark ? '#1e293b' : '#e2e8f0';
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in-up">
       
       {/* Welcome Banner */}
       <div className={`p-6 rounded-3xl border shadow-xl flex items-center justify-between flex-wrap gap-4 ${
@@ -51,6 +77,84 @@ export default function FinanceHrDashboard() {
             <span className="text-[10px] text-emerald-100 font-bold uppercase block">Pending Accounts</span>
             <span className="text-xl font-extrabold text-amber-300 font-mono">${totalPending.toLocaleString()}</span>
           </div>
+        </div>
+      </div>
+
+      {/* Revenue & Payroll Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Monthly Revenue Trend */}
+        <div className={`p-6 rounded-2xl border shadow-sm ${
+          isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+        }`}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className={`font-bold text-sm flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <Activity className="w-4 h-4 text-emerald-600" />
+              <span>Monthly Revenue Trend</span>
+            </h3>
+            <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
+              6-Month View
+            </span>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={monthlyRevenue}>
+              <defs>
+                <linearGradient id="gradCollected" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="gradPending" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} />
+              <XAxis dataKey="month" tick={{ fill: chartTextColor, fontSize: 11 }} />
+              <YAxis tick={{ fill: chartTextColor, fontSize: 10 }} tickFormatter={(v) => `$${(v/1000)}k`} />
+              <Tooltip 
+                formatter={(value: any) => [`$${Number(value).toLocaleString()}`, 'Amount']}
+                contentStyle={{ 
+                  backgroundColor: isDark ? '#1e293b' : '#fff', 
+                  border: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`,
+                  borderRadius: '12px', fontSize: '11px', fontWeight: 'bold'
+                }}
+              />
+              <Area type="monotone" dataKey="collected" stroke="#10b981" fill="url(#gradCollected)" strokeWidth={2} />
+              <Area type="monotone" dataKey="pending" stroke="#f59e0b" fill="url(#gradPending)" strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Payroll by Department */}
+        <div className={`p-6 rounded-2xl border shadow-sm ${
+          isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+        }`}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className={`font-bold text-sm flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <Users className="w-4 h-4 text-indigo-600" />
+              <span>Payroll Distribution by Department</span>
+            </h3>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={payrollByDept} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} />
+              <XAxis type="number" tick={{ fill: chartTextColor, fontSize: 10 }} tickFormatter={(v) => `$${(v/1000)}k`} />
+              <YAxis type="category" dataKey="dept" tick={{ fill: chartTextColor, fontSize: 11 }} width={80} />
+              <Tooltip 
+                formatter={(value: any) => [`$${Number(value).toLocaleString()}`, 'Disbursed']}
+                contentStyle={{ 
+                  backgroundColor: isDark ? '#1e293b' : '#fff', 
+                  border: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`,
+                  borderRadius: '12px', fontSize: '11px', fontWeight: 'bold'
+                }}
+              />
+              <Bar dataKey="amount" radius={[0, 6, 6, 0]}>
+                {payrollByDept.map((entry, idx) => (
+                  <Cell key={idx} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
@@ -141,7 +245,7 @@ export default function FinanceHrDashboard() {
             {payroll.map((p) => {
               const netPay = p.salary + p.bonus - p.deductions;
               return (
-                <div key={p.id} className={`p-4 rounded-xl border space-y-2 text-xs ${
+                <div key={p.id} className={`p-4 rounded-xl border space-y-2 text-xs card-hover ${
                   isDark ? 'bg-slate-800/60 border-slate-800' : 'bg-slate-50 border-slate-200'
                 }`}>
                   <div className="flex items-center justify-between">
@@ -189,7 +293,7 @@ export default function FinanceHrDashboard() {
 
           <div className="space-y-3">
             {inventory.map((item) => (
-              <div key={item.id} className={`p-4 rounded-xl border space-y-2 text-xs ${
+              <div key={item.id} className={`p-4 rounded-xl border space-y-2 text-xs card-hover ${
                 isDark ? 'bg-slate-800/60 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center justify-between">
